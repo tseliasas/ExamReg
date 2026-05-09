@@ -6,7 +6,7 @@ namespace LanguageExamApp
     public class DatabaseHelper
     {
         // 🚨 ATTENTION TEAMMATE: Update this string with your Windows SQL Server details!
-        private string connectionString = "Server=YOUR_SERVER_NAME; Database=LanguageExamDB; TrustServerCertificate=True; Integrated Security=True;";
+        private string connectionString = @"Server=DESKTOP-BUGKGO7\SQLEXPRESS; Database=LanguageExamDB; TrustServerCertificate=True; Integrated Security=True;";
 
         public SqlConnection GetConnection()
         {
