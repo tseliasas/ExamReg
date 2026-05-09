@@ -117,6 +117,11 @@ namespace LanguageExamApp
                     // Update the screen to show success!
                     lblMessage.Text = $"Successfully registered for Exam ID: {parsedExamId}!";
                     lblMessage.Foreground = Brushes.Green;
+
+                    // ==========================================
+                    // 🛑 THE FIX: TELL THE UI TO UPDATE 🛑
+                    // ==========================================
+                    myExams.Add($"Registered for Exam ID: {parsedExamId} (Status: Confirmed SQL)");
                 }
             }
             catch (Exception ex)
