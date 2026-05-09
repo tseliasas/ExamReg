@@ -40,12 +40,21 @@ namespace LanguageExamApp
 
         // This is the method that triggers when they click the Register button
         public void BtnRegister_Click(object source, RoutedEventArgs args){
-            // 1. Explicitly find the boxes on the screen!
-            var txtExamId = this.FindControl<TextBox>("txtExamId");
-            var lblMessage = this.FindControl<TextBlock>("lblMessage");
+            // 1. Explicitly find the boxes using the EXACT names from the .axaml file!
+            var txtExamId = this.FindControl<TextBox>("txtExamID"); // Changed to capital ID
+            var lblMessage = this.FindControl<TextBlock>("txtFeedback"); // Changed to txtFeedback
 
-            // 2. GET THE INPUT
-            string selectedId = txtExamId.Text ?? ""; 
+            // 🛑 NEW DEFENSE: Let's make sure it doesn't crash if we ever rename things again!
+            if (txtExamId == null || lblMessage == null)
+            {
+                Console.WriteLine("CRASH PREVENTED: Still can't find the UI boxes. Check names!");
+                return; 
+            }
+
+    // 2. GET THE INPUT
+    string selectedId = txtExamId.Text ?? ""; 
+
+    // ... (Keep the rest of your bouncer and database code exactly as it is!) ...
 
             // ==========================================
             // 🛑 THE BOUNCER STARTS HERE 🛑
