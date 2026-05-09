@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Collections.ObjectModel; // We added this for the smart lists!
 using System;
+using Avalonia.Media;
 
 namespace LanguageExamApp
 {
@@ -37,57 +38,82 @@ namespace LanguageExamApp
             bottomBox.ItemsSource = myExams;
         }
 
-        public void BtnRegister_Click(object source, RoutedEventArgs args)
-        {
-            var examIdBox = this.FindControl<TextBox>("txtExamID");
-            var feedbackText = this.FindControl<TextBlock>("txtFeedback");
-            
-            if (examIdBox == null || feedbackText == null) return;
+        // This is the method that triggers when they click the Register button
+        public void BtnRegister_Click(object source, RoutedEventArgs args){
+            // 1. Explicitly find the boxes on the screen!
+            var txtExamId = this.FindControl<TextBox>("txtExamId");
+            var lblMessage = this.FindControl<TextBlock>("lblMessage");
 
-            string selectedId = examIdBox.Text ?? "";
+            // 2. GET THE INPUT
+            string selectedId = txtExamId.Text ?? ""; 
 
+            // ==========================================
+            // 🛑 THE BOUNCER STARTS HERE 🛑
+            // ==========================================
+
+            // Check 1: Is it empty?
             if (string.IsNullOrWhiteSpace(selectedId))
             {
-                feedbackText.Foreground = Avalonia.Media.Brushes.Red;
-                feedbackText.Text = "Please enter an Exam ID.";
+                lblMessage.Text = "Error: Please enter an Exam ID.";
+                lblMessage.Foreground = Brushes.Red;
+                return; 
+            }
+            
+            // ... (Keep the rest of your bouncer and database code exactly as it is!) ...
+
+            // Check 2: Is it a real number?
+            if (!int.TryParse(selectedId, out int parsedExamId))
+            {
+                lblMessage.Text = "Error: Exam ID must be a number.";
+                lblMessage.Foreground = Brushes.Red;
                 return;
             }
 
-            // --- REAL DATABASE CONNECTION STARTS HERE ---
-            DatabaseHelper dbHelper = new DatabaseHelper();
+            // Check 3: Is it one of our valid exams?
+            if (parsedExamId != 101 && parsedExamId != 102 && parsedExamId != 103)
+            {
+                lblMessage.Text = "Error: That Exam ID does not exist.";
+                lblMessage.Foreground = Brushes.Red;
+                return;
+            }
 
-            try
+            // ==========================================
+            // ✅ THE BOUNCER ENDS HERE ✅
+            // ==========================================
+
+
+            // 2. THE DATABASE LOGIC
+            // If the code makes it down here, it means the data passed all 3 checks!
+            // Now it is perfectly safe to open the connection to your friend's database.
+            
+            DatabaseHelper dbHelper = new DatabaseHelper();
+            
+            try 
             {
                 using (var conn = dbHelper.GetConnection())
                 {
                     conn.Open();
-
-                    // Tell C# the name of the SQL Stored Procedure
+                    
                     using (var cmd = new Microsoft.Data.SqlClient.SqlCommand("RegisterForExam", conn))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-                        // Pass the parameters (Assuming hardcoded UserID 1 for now, and the ExamID they typed)
-                        cmd.Parameters.AddWithValue("@p_UserID", 1);
-                        cmd.Parameters.AddWithValue("@p_SessionID", int.Parse(selectedId));
-
-                        // Execute the SQL!
-                        cmd.ExecuteNonQuery();
-
-                        // If SQL doesn't throw an error, it was a success!
-                        feedbackText.Foreground = Avalonia.Media.Brushes.Green;
-                        feedbackText.Text = $"Successfully registered for Exam ID: {selectedId}!";
                         
-                        myExams.Add($"Registered for Exam ID: {selectedId} (Status: Confirmed SQL)");
-                        examIdBox.Text = ""; 
+                        // Use the clean, safe 'parsedExamId' that the bouncer approved
+                        cmd.Parameters.AddWithValue("@p_UserID", 1); 
+                        cmd.Parameters.AddWithValue("@p_SessionID", parsedExamId); 
+                        
+                        cmd.ExecuteNonQuery();
                     }
+                    
+                    // Update the screen to show success!
+                    lblMessage.Text = $"Successfully registered for Exam ID: {parsedExamId}!";
+                    lblMessage.Foreground = Brushes.Green;
                 }
             }
             catch (Exception ex)
             {
-                // If the Stored Procedure fails (e.g., 0 seats left), SQL sends an error back to C#
-                feedbackText.Foreground = Avalonia.Media.Brushes.Red;
-                feedbackText.Text = "Database Error: " + ex.Message;
+                lblMessage.Text = "Database Error: " + ex.Message;
+                lblMessage.Foreground = Brushes.Red;
             }
         }
     }
