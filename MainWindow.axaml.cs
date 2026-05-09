@@ -3,21 +3,21 @@ using Avalonia.Interactivity;
 
 namespace LanguageExamApp
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window // partial cos half of the window is xaml
     {
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); // basically go read the design and draw the buttons
         }
 
-        public void BtnLogin_Click(object source, RoutedEventArgs args)
+        public void BtnLogin_Click(object source, RoutedEventArgs args) //this fires up when the user clicks the login button
         {
-            // 1. Grab the text boxes from the UI
+            // the following just finds the buttons from our ui
             var emailBox = this.FindControl<TextBox>("txtEmail");
             var passwordBox = this.FindControl<TextBox>("txtPassword");
             var loginBtn = source as Button;
 
-            // Prevent crashing if the boxes are empty
+            // to prevent crashing if the boxes are empty
             if (emailBox == null || passwordBox == null || loginBtn == null) return;
 
             string email = emailBox.Text ?? "";
