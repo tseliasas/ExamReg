@@ -1,6 +1,3 @@
-use LanguageExamDB;
-GO
-
 -- Roles Table to define if u user in instructor or student
 CREATE TABLE Roles (
     RoleID INT PRIMARY KEY,
