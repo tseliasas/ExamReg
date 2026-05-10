@@ -23,19 +23,21 @@ namespace LanguageExamApp
             string email = emailBox.Text ?? "";
             string password = passwordBox.Text ?? "";
 
-            // 2. Fake Login Check (We will connect this to SQL next)
-            // Fake Login Check
+            // fake login check kinda like a mock authentication
+            // we hardcoded this as well because our priority was getting the cross platform db pipeline working
+            // to fully finish the build, we will need to write a new sql query to check the actual users
+
             if(email.Trim() == "student@test.com" && password.Trim() == "1234")
             {
-                // Change button text so we know it worked
+                // changes the button text to show it works
                 var btn = source as Button;
                 btn.Content = "Opening Dashboard...";
 
-                // Create and show the dashboard
+                // displays the dashboard window
                 var dashboard = new DashboardWindow();
                 dashboard.Show();
 
-                // Wait 1 second so the UI can process the new window, then hide the login
+                // wait 1 sec so the UI can process the new window, then hide the login
                 System.Threading.Tasks.Task.Delay(500).ContinueWith(_ => 
                 {
                     Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => this.Hide());
